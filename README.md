@@ -1,6 +1,8 @@
-# Cofre — Controle Financeiro Pessoal
+# Finance — Controle Financeiro Pessoal 📰
 
-A web app for tracking personal finances, with transaction management, monthly views, forecasts, and investment tracking.
+![Status do Projeto](https://img.shields.io/badge/Status-Concluído-green)
+
+A web app para controlar as finanças, com gerenciamento de transações, visões mensais, previsões e rastreio de investimentos.
 
 ## Funcionalidades
 
@@ -13,7 +15,7 @@ A web app for tracking personal finances, with transaction management, monthly v
 ## Como usar
 
 1. Abra `index.html` em um navegador
-2. Se quiser sincronizar com uma planilha Google, configure o `SHEETS_API_URL` em `config.js` (via Netlify builds ou manualmente)
+2. Se quiser sincronizar com uma planilha Google, configure o `SHEETS_API_URL` nas variáveis de ambiente (no caso o ideal é Netlify, pois já tem o netlify.toml configurado no repositório)
 3. Comece a lançar transações na aba "Lançar"
 
 ## Estrutura
@@ -23,7 +25,6 @@ A web app for tracking personal finances, with transaction management, monthly v
 - `styles.css` — Estilos visual
 - `AppScript_code.gs` — Código para colar no Apps Script da sua planilha (para backend)
 - `netlify.toml` — Configuração de build para injetar a variável de ambiente `SHEETS_API_URL`
-- `config.js` — Gerado pelo Netlify, contém a URL da API (opcional)
 
 ## Desenvolvimento
 
