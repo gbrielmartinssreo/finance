@@ -2,7 +2,7 @@
 
 ![Status do Projeto](https://img.shields.io/badge/Status-Concluído-green)
 
-A web app para controlar as finanças, com gerenciamento de transações, visões mensais, previsões e rastreio de investimentos.
+Um web app para controlar as finanças, com gerenciamento de transações, visões mensais, previsões e rastreio de investimentos.
 
 ## Funcionalidades
 
