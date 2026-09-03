@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cofre — Controle Financeiro</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Cofre · Controle Pessoal</div>
+  <h1>Suas finanças, em ordem.</h1>
+</header>
+<div id="configWarning" style="display:none; background:#3a2a1a; border-bottom:1px solid #c9a84c; padding:10px 20px; font-size:12px; color:#e8c98a;">
+  ⚠️ Planilha ainda não conectada — os dados estão salvos só neste navegador (não sincroniza entre aparelhos). Veja o guia de configuração enviado junto com este arquivo.
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-view="lancar">Lançar</div>
+  <div class="tab" data-view="mes">Mês</div>
+  <div class="tab" data-view="previsao">Previsão</div>
+  <div class="tab" data-view="investir">Investir</div>
+</div>
+
+<main>
+
+  <!-- LANÇAR -->
+  <div class="view active" id="view-lancar">
+    <div class="card">
+      <h2>Novo lançamento</h2>
+      <form id="txForm">
+        <div class="seg" id="typeSeg">
+          <button type="button" class="on income" data-type="income">Receita</button>
+          <button type="button" class="expense" data-type="expense">Gasto</button>
+        </div>
+        <div>
+          <label>Descrição</label>
+          <input type="text" id="txDesc" placeholder="Ex: Salário, Aluguel, iFood..." required>
+        </div>
+        <div class="grid2">
+          <div>
+            <label>Valor (R$)</label>
+            <input type="number" id="txValor" step="0.01" placeholder="0,00" required>
+          </div>
+          <div>
+            <label>Data</label>
+            <input type="date" id="txData" required>
+          </div>
+        </div>
+        <div>
+          <label>Categoria</label>
+          <select id="txCat">
+            <option>Moradia</option><option>Alimentação</option><option>Transporte</option>
+            <option>Lazer</option><option>Saúde</option><option>Salário</option>
+            <option>Freelance</option><option>Assinaturas</option><option>Outros</option>
+          </select>
+        </div>
+        <button type="submit" class="primary">Adicionar</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Últimos lançamentos</h2>
+      <div id="recentList"></div>
+    </div>
+  </div>
+
+  <!-- MÊS -->
+  <div class="view" id="view-mes">
+    <div class="month-nav">
+      <button id="mPrev">‹</button>
+      <div class="lbl" id="mLabel">—</div>
+      <button id="mNext">›</button>
+    </div>
+
+    <div class="card">
+      <div class="balance-hero">
+        <div class="label">Saldo do mês</div>
+        <div class="num" id="mBalance">R$ 0,00</div>
+      </div>
+      <div class="row3">
+        <div class="stat"><div class="v" id="mIncome" style="color:var(--green)">R$ 0</div><div class="l">Receitas</div></div>
+        <div class="stat"><div class="v" id="mExpense" style="color:var(--red)">R$ 0</div><div class="l">Gastos</div></div>
+        <div class="stat"><div class="v" id="mRate">0%</div><div class="l">Taxa poupança</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Gastos por categoria</h2>
+      <div id="catBars"><div class="empty">Sem gastos neste mês.</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Todos os lançamentos do mês</h2>
+      <div id="mList"><div class="empty">Nada por aqui ainda.</div></div>
+    </div>
+  </div>
+
+  <!-- PREVISÃO -->
+  <div class="view" id="view-previsao">
+    <div class="card">
+      <h2>Previsão para o próximo mês</h2>
+      <p class="note">Baseado na média dos últimos meses com dados registrados.</p>
+      <div class="row3" style="margin-top:10px;">
+        <div class="stat"><div class="v" id="pIncome" style="color:var(--green)">—</div><div class="l">Receita média</div></div>
+        <div class="stat"><div class="v" id="pExpense" style="color:var(--red)">—</div><div class="l">Gasto médio</div></div>
+        <div class="stat"><div class="v" id="pFree" style="color:var(--gold)">—</div><div class="l">Sobra estimada</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Quanto investir?</h2>
+      <p class="note">Divida a sobra estimada entre uma reserva e investimentos. Ajuste o quanto quiser guardar.</p>
+      <div style="margin-top:12px;">
+        <label>% da sobra para investir <span id="pctLabel" style="color:var(--gold)"></span></label>
+        <input type="range" id="investPct" min="0" max="100" value="50" style="width:100%; accent-color:var(--gold);">
+      </div>
+      <div class="row3" style="margin-top:10px;">
+        <div class="stat"><div class="v" id="pInvest" style="color:var(--gold)">—</div><div class="l">A investir</div></div>
+        <div class="stat"><div class="v" id="pReserve">—</div><div class="l">Reserva/gastos extras</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Histórico mensal</h2>
+      <div id="histList"><div class="empty">Registre alguns meses para ver o histórico.</div></div>
+    </div>
+  </div>
+
+  <!-- INVESTIR -->
+  <div class="view" id="view-investir">
+    <div class="card">
+      <div class="balance-hero">
+        <div class="label">Patrimônio investido</div>
+        <div class="num" id="totalInvested">R$ 0,00</div>
+        <div class="pnl" id="totalPnl" style="text-align:center; font-family:var(--mono); font-size:14px;">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Adicionar ativo</h2>
+      <form id="assetForm">
+        <div class="grid2">
+          <div>
+            <label>Nome</label>
+            <input type="text" id="aNome" placeholder="Bitcoin" required>
+          </div>
+          <div>
+            <label>Ticker</label>
+            <input type="text" id="aTicker" placeholder="BTC">
+          </div>
+        </div>
+        <div class="grid2">
+          <div>
+            <label>Quantidade</label>
+            <input type="number" id="aQtd" step="any" placeholder="0.005" required>
+          </div>
+          <div>
+            <label>Preço médio pago (R$)</label>
+            <input type="number" id="aPrecoCompra" step="0.01" placeholder="300000" required>
+          </div>
+        </div>
+        <div>
+          <label>Preço atual (R$) — atualize manualmente</label>
+          <input type="number" id="aPrecoAtual" step="0.01" placeholder="320000" required>
+        </div>
+        <button type="submit" class="primary">Adicionar ativo</button>
+      </form>
+      <p class="note" style="margin-top:10px;">Este app não busca cotação em tempo real automaticamente. Confira o preço no Google, CoinMarketCap ou sua corretora e atualize aqui quando quiser.</p>
+    </div>
+
+    <div class="card">
+      <h2>Seus ativos</h2>
+      <div id="assetList"><div class="empty">Nenhum ativo cadastrado ainda.</div></div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
