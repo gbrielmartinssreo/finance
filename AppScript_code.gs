@@ -1,8 +1,8 @@
 /**
  * COFRE — API da planilha
- * Cole este código no Apps Script da sua planilha (veja o guia GUIA-DEPLOY.md).
+ * Cole este código no Apps Script da sua planilha
  *
- * Estrutura esperada da planilha: uma aba chamada "dados" com as colunas:
+ * Estrutura da planilha: uma aba chamada "dados" com as colunas:
  * A: user_id | B: key | C: value (JSON como texto) | D: updated_at
  * (o código cria essa aba sozinho se ela não existir)
  */
