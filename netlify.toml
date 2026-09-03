@@ -1,0 +1,3 @@
+[build]
+  command = "echo \"const SHEETS_API_URL = '$SHEETS_API_URL';\" > config.js"
+  publish = "."
