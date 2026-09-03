@@ -1,7 +1,4 @@
-/* ====== CONFIGURAÇÃO — cole aqui a URL do seu Apps Script implantado ====== */
-const SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzcD1meqgasrh2Ahj_ReRFwpdEkh_XGlutT_7BHVP97xwRZDZKmPQJtzvQ7S6i6-fBo/exec";
-/* =========================================================================== */
-
+/* A URL do Apps Script agora vem do config.js (carregado antes deste arquivo no index.html) */
 const sheetsConfigured = SHEETS_API_URL.startsWith("http");
 
 /* Identificador fixo da sua "conta" — o mesmo em todos os aparelhos garante que
