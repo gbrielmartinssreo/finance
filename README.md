@@ -1,4 +1,4 @@
-# Finance — Controle Financeiro Pessoal 📰
+# Finance — Controle Financeiro Pessoal 💵
 
 ![Status do Projeto](https://img.shields.io/badge/Status-Concluído-green)
 
