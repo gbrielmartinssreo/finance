@@ -31,6 +31,47 @@ const store = {
     } else {
       localStorage.setItem('cofre_'+key, JSON.stringify(value));
     }
+  },
+
+  // ---- transações: cada uma vira uma linha na aba "transactions", não um JSON gigante numa célula ----
+  async getTransactions(){
+    if(sheetsConfigured){
+      const url = `${SHEETS_API_URL}?action=getTransactions&user=${encodeURIComponent(USER_ID)}`;
+      const res = await fetch(url);
+      if(!res.ok) throw new Error('Falha ao ler transações da planilha');
+      const json = await res.json();
+      return json.value || [];
+    } else {
+      const v = localStorage.getItem('cofre_transactions');
+      return v ? JSON.parse(v) : [];
+    }
+  },
+  async addTransaction(tx){
+    if(sheetsConfigured){
+      const res = await fetch(SHEETS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action:'addTransaction', user: USER_ID, transaction: tx })
+      });
+      if(!res.ok) throw new Error('Falha ao salvar transação');
+    } else {
+      const list = JSON.parse(localStorage.getItem('cofre_transactions') || '[]');
+      list.unshift(tx);
+      localStorage.setItem('cofre_transactions', JSON.stringify(list));
+    }
+  },
+  async deleteTransaction(id){
+    if(sheetsConfigured){
+      const res = await fetch(SHEETS_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action:'deleteTransaction', user: USER_ID, id })
+      });
+      if(!res.ok) throw new Error('Falha ao apagar transação');
+    } else {
+      const list = JSON.parse(localStorage.getItem('cofre_transactions') || '[]');
+      localStorage.setItem('cofre_transactions', JSON.stringify(list.filter(t=>t.id!==id)));
+    }
   }
 };
 
@@ -49,7 +90,7 @@ function showToast(msg){
 
 async function loadState(){
   if(sheetsConfigured){ showToast('Conectando à planilha...'); }
-  try{ state.transactions = await store.get('transactions') || []; }
+  try{ state.transactions = await store.getTransactions(); }
   catch(e){ console.error(e); state.transactions = []; showToast('Erro ao carregar (veja configuração)'); }
   try{ state.assets = await store.get('assets') || []; }
   catch(e){ state.assets = []; }
@@ -59,12 +100,6 @@ async function loadState(){
   catch(e){ state.monthStartingBalances = {}; }
   await autoCascadeBalances();
   render();
-}
-async function saveTransactions(){
-  try{ await store.set('transactions', state.transactions); }
-  catch(e){ console.error(e); showToast('Erro ao salvar'); }
-  // Cascade balances after saving transactions
-  await autoCascadeBalances();
 }
 async function saveAssets(){
   try{ await store.set('assets', state.assets); }
@@ -106,8 +141,12 @@ $('#txForm').addEventListener('submit', async e=>{
     cat: $('#txCat').value
   };
   if(!tx.desc || isNaN(tx.valor)) return;
+
   state.transactions.unshift(tx);
-  await saveTransactions();
+  try{ await store.addTransaction(tx); }
+  catch(e){ console.error(e); showToast('Erro ao salvar'); }
+  await autoCascadeBalances();
+
   $('#txForm').reset();
   $('#txData').valueAsDate = new Date();
   showToast('Lançamento adicionado');
@@ -116,7 +155,9 @@ $('#txForm').addEventListener('submit', async e=>{
 
 async function deleteTx(id){
   state.transactions = state.transactions.filter(t=>t.id!==id);
-  await saveTransactions();
+  try{ await store.deleteTransaction(id); }
+  catch(e){ console.error(e); showToast('Erro ao apagar'); }
+  await autoCascadeBalances();
   render();
 }
 
